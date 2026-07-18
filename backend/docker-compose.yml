@@ -1,0 +1,188 @@
+version: '3.8'
+
+services:
+  # Message Broker & Cache Node
+  redis:
+    image: redis:7.0-alpine
+    container_name: stadiax-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - stadiax-net
+
+  # AI Memory Vector Node
+  qdrant:
+    image: qdrant/qdrant:v1.3.0
+    container_name: stadiax-qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant-data:/qdrant/storage
+    networks:
+      - stadiax-net
+
+  # API Gateway Proxy Node
+  api-gateway:
+    build: .
+    container_name: stadiax-gateway
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - JWT_SECRET=stadiax_ultra_secret_key_2026
+      - AUTH_SERVICE_URL=http://auth-service:8001
+      - AI_SERVICE_URL=http://ai-service:8002
+      - CROWD_SERVICE_URL=http://crowd-service:8003
+      - TRANSIT_SERVICE_URL=http://transit-service:8004
+      - SECURITY_SERVICE_URL=http://security-service:8005
+      - VOLUNTEER_SERVICE_URL=http://volunteer-service:8006
+      - OPERATIONS_SERVICE_URL=http://operations-service:8007
+      - VENDOR_SERVICE_URL=http://vendor-service:8008
+      - ACCESSIBILITY_SERVICE_URL=http://accessibility-service:8009
+      - SUSTAINABILITY_SERVICE_URL=http://sustainability-service:8010
+      - ANALYTICS_SERVICE_URL=http://analytics-service:8011
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # User Authentication Service
+  auth-service:
+    build: .
+    container_name: stadiax-auth
+    command: uvicorn services.auth.main:app --host 0.0.0.0 --port 8001
+    environment:
+      - JWT_SECRET=stadiax_ultra_secret_key_2026
+      - AUTH_DB_PATH=auth_database.db
+    networks:
+      - stadiax-net
+
+  # AI LangGraph Engine Service
+  ai-service:
+    build: .
+    container_name: stadiax-ai
+    command: uvicorn services.ai_gateway.main:app --host 0.0.0.0 --port 8002
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+      - QDRANT_URL=http://qdrant:6333
+      - GEMINI_API_KEY=${GEMINI_API_KEY:-""}
+    depends_on:
+      - redis
+      - qdrant
+    networks:
+      - stadiax-net
+
+  # Crowd sensor processing Service
+  crowd-service:
+    build: .
+    container_name: stadiax-crowd
+    command: uvicorn services.crowd.main:app --host 0.0.0.0 --port 8003
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Transit optimization Service
+  transit-service:
+    build: .
+    container_name: stadiax-transit
+    command: uvicorn services.transit.main:app --host 0.0.0.0 --port 8004
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Incident ledger Service
+  security-service:
+    build: .
+    container_name: stadiax-security
+    command: uvicorn services.security.main:app --host 0.0.0.0 --port 8005
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Volunteer assignments Service
+  volunteer-service:
+    build: .
+    container_name: stadiax-volunteer
+    command: uvicorn services.volunteer.main:app --host 0.0.0.0 --port 8006
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Facility maintenance checklist Service
+  operations-service:
+    build: .
+    container_name: stadiax-operations
+    command: uvicorn services.operations.main:app --host 0.0.0.0 --port 8007
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Vendor concession POS Service
+  vendor-service:
+    build: .
+    container_name: stadiax-vendor
+    command: uvicorn services.vendors.main:app --host 0.0.0.0 --port 8008
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Accessibility lift support Service
+  accessibility-service:
+    build: .
+    container_name: stadiax-accessibility
+    command: uvicorn services.accessibility.main:app --host 0.0.0.0 --port 8009
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Sustainability eco battery Service
+  sustainability-service:
+    build: .
+    container_name: stadiax-sustainability
+    command: uvicorn services.sustainability.main:app --host 0.0.0.0 --port 8010
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+  # Analytics aggregation Service
+  analytics-service:
+    build: .
+    container_name: stadiax-analytics
+    command: uvicorn services.analytics.main:app --host 0.0.0.0 --port 8011
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
+    networks:
+      - stadiax-net
+
+networks:
+  stadiax-net:
+    driver: bridge
+
+volumes:
+  qdrant-data:
