@@ -116,9 +116,10 @@ export default function LandingPage() {
       <header className="relative z-10 max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-tr from-[#00E5FF] to-[#3B82F6] flex items-center justify-center shadow-[0_0_15px_rgba(0,229,255,0.4)]">
-            <Cpu className="w-5 h-5 text-[#07111F]" />
+            <Cpu className="w-5 h-5 text-[#07111F]" aria-hidden="true" />
           </div>
           <span className="font-heading font-bold text-xl tracking-wider">
+
             STADIA<span className="text-[#00E5FF]">X</span>
           </span>
         </div>
@@ -153,9 +154,10 @@ export default function LandingPage() {
       {/* Hero */}
       <section className="relative z-10 max-w-5xl mx-auto px-6 pt-16 pb-12 text-center">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[rgba(16,28,45,0.85)] border border-[rgba(0,229,255,0.2)] text-xs font-semibold text-[#00E5FF] shadow-[0_0_15px_rgba(0,229,255,0.1)] mb-8 animate-neon-pulse">
-          <Activity className="w-3.5 h-3.5" />
+          <Activity className="w-3.5 h-3.5" aria-hidden="true" />
           <span>FIFA World Cup 2026 Operational Intelligence</span>
         </div>
+
 
         <h1 className="font-heading font-bold text-5xl md:text-7xl leading-tight tracking-tight text-white mb-6">
           The Autonomous AI Brain <br />

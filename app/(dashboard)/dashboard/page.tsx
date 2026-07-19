@@ -139,7 +139,7 @@ export default function MainDashboardPage() {
       <div className="flex items-center justify-between pb-4 border-b border-[rgba(248,250,252,0.05)]">
         <div>
           <h1 className="font-heading font-bold text-2xl text-white tracking-wide flex items-center gap-2">
-            <Cpu className="w-6 h-6 text-[#00E5FF]" />
+            <Cpu className="w-6 h-6 text-[#00E5FF]" aria-hidden="true" />
             MISSION CONTROL CENTER
           </h1>
           <p className="text-xs text-[#94A3B8] font-mono mt-0.5">
@@ -149,7 +149,7 @@ export default function MainDashboardPage() {
         
         {simulationMode !== "Normal" && (
           <div className="bg-[#FF4D6D]/10 border border-[#FF4D6D]/40 text-[#FF4D6D] font-mono text-xs px-3.5 py-1.5 rounded-lg animate-pulse flex items-center gap-2 font-bold shadow-[0_0_15px_rgba(255,77,109,0.15)]">
-            <AlertTriangle className="w-4.5 h-4.5" />
+            <AlertTriangle className="w-4.5 h-4.5" aria-hidden="true" />
             STADIUM EVACUATION SIMULATOR ACTIVE
           </div>
         )}
@@ -170,8 +170,9 @@ export default function MainDashboardPage() {
                 <span className="text-[10px] font-sans font-semibold text-[#94A3B8] uppercase tracking-wide truncate">
                   {kpi.title}
                 </span>
-                <Icon className={`w-4 h-4 ${kpi.color} shrink-0`} />
+                <Icon className={`w-4 h-4 ${kpi.color} shrink-0`} aria-hidden="true" />
               </div>
+
               <div className="mt-2.5">
                 <span className="text-xl font-mono font-bold text-white tracking-tight">
                   {kpi.value}
