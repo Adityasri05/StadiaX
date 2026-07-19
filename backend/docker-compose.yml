@@ -29,7 +29,7 @@ services:
       - "8000:8000"
     environment:
       - REDIS_URL=redis://redis:6379/0
-      - JWT_SECRET=stadiax_ultra_secret_key_2026
+      - JWT_SECRET=${JWT_SECRET:-stadiax_fallback_sec_2026}
       - AUTH_SERVICE_URL=http://auth-service:8001
       - AI_SERVICE_URL=http://ai-service:8002
       - CROWD_SERVICE_URL=http://crowd-service:8003
@@ -52,7 +52,7 @@ services:
     container_name: stadiax-auth
     command: uvicorn services.auth.main:app --host 0.0.0.0 --port 8001
     environment:
-      - JWT_SECRET=stadiax_ultra_secret_key_2026
+      - JWT_SECRET=${JWT_SECRET:-stadiax_fallback_sec_2026}
       - AUTH_DB_PATH=auth_database.db
     networks:
       - stadiax-net
