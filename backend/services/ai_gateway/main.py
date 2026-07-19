@@ -16,6 +16,7 @@ app = FastAPI(title="StadiaX AI Gateway Service", version="1.0.0")
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 QDRANT_URL = os.getenv("QDRANT_URL", "http://localhost:6333")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-2.5-flash-lite")
 
 class QueryRequest(BaseModel):
     query: str
@@ -198,6 +199,31 @@ AGENTS = {
     "sustainability": XGreenAgent("X-Green", "energy optimize")
 }
 
+async def call_gemini_api(prompt: str, model: str = GEMINI_MODEL) -> str:
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={GEMINI_API_KEY}"
+    headers = {"Content-Type": "application/json"}
+    payload = {
+        "contents": [
+            {
+                "parts": [
+                    {"text": prompt}
+                ]
+            }
+        ]
+    }
+    async with httpx.AsyncClient() as client:
+        try:
+            response = await client.post(url, json=payload, headers=headers, timeout=12.0)
+            if response.status_code == 200:
+                data = response.json()
+                return data["candidates"][0]["content"]["parts"][0]["text"]
+            else:
+                logger.error(f"Gemini API returned status code {response.status_code}: {response.text}")
+                return ""
+        except Exception as e:
+            logger.error(f"Error calling Gemini API: {e}")
+            return ""
+
 # LangGraph-inspired Cognitive pipeline orchestrator
 async def orchestrate_agents(query: str) -> Dict[str, Any]:
     lower_query = query.toLowerCase() if hasattr(query, "toLowerCase") else query.lower()
@@ -261,7 +287,25 @@ async def orchestrate_agents(query: str) -> Dict[str, Any]:
             highest_priority = "medium"
 
     final_summary = " // ".join(merged_summary)
+    final_reasoning = "LangGraph orchestrated parallel agent nodes. Resolved safety parameters."
     
+    if GEMINI_API_KEY:
+        prompt = f"""
+You are the StadiaX AI OS, an autonomous operations brain for smart stadiums during the FIFA World Cup 2026.
+Synthesize the following telemetry findings into a single, cohesive, professional operational briefing for the commander.
+
+User Query: "{query}"
+
+Sub-Agent Findings:
+{"\n".join(f"- {out['name']} ({out['role']}): {out['summary']} (Confidence: {out['confidence_score']})" for out in outputs)}
+
+Provide a concise, formal summary of the situation.
+"""
+        gemini_summary = await call_gemini_api(prompt)
+        if gemini_summary:
+            final_summary = gemini_summary.strip()
+            final_reasoning = f"Synthesized via {GEMINI_MODEL} using sub-agent inputs."
+
     # 4. Long-term memory simulation (Write back to vector Qdrant/local storage)
     memory_entry = {
         "query": query,
@@ -275,7 +319,7 @@ async def orchestrate_agents(query: str) -> Dict[str, Any]:
     # 5. Formulate final response standard schema
     return {
         "summary": final_summary,
-        "reasoning": "LangGraph orchestrated parallel agent nodes. Resolved safety parameters.",
+        "reasoning": final_reasoning,
         "evidence": f"Telemetry verified across {len(outputs)} sensor arrays.",
         "confidence_score": max_confidence,
         "priority": highest_priority,

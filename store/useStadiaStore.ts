@@ -83,10 +83,26 @@ interface StadiaState {
   setSimulationMode: (mode: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy") => void;
   toggleMapLayer: (layer: keyof MapLayers) => void;
   setMapActiveRoute: (routeType: "shortest" | "fastest" | "safest" | "wheelchair" | "family" | "least_crowded" | null) => void;
-  sendConciergeMessage: (text: string) => void;
+  sendConciergeMessage: (text: string) => Promise<void>;
   tickMatchTime: () => void;
   setSelectedSector: (sector: string | null) => void;
   setSelectedGate: (gate: string | null) => void;
+
+  // Authentication State
+  user: {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+  } | null;
+  authLoading: boolean;
+  setUser: (user: {
+    uid: string;
+    email: string | null;
+    displayName: string | null;
+    photoURL: string | null;
+  } | null) => void;
+  setAuthLoading: (loading: boolean) => void;
 }
 
 const initialIncidents: Incident[] = [
@@ -293,6 +309,8 @@ export const useStadiaStore = create<StadiaState>((set) => ({
   selectedGate: null,
   selectedSector: null,
   activeRouteType: null,
+  user: null,
+  authLoading: true,
 
   // Actions
   resolveIncident: (id) => set((state) => {
@@ -371,7 +389,7 @@ export const useStadiaStore = create<StadiaState>((set) => ({
 
   setMapActiveRoute: (routeType) => set({ activeRouteType: routeType }),
 
-  sendConciergeMessage: (text) => set((state) => {
+  sendConciergeMessage: async (text) => {
     const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     const userMsg: ChatMessage = {
       id: `chat-${Date.now()}`,
@@ -380,83 +398,109 @@ export const useStadiaStore = create<StadiaState>((set) => ({
       timestamp: timeStr
     };
 
-    // AI logic simulation based on keyword
-    let responseText = "Analyzing query in command center...";
-    let routeData;
+    set((state) => ({
+      chatHistory: [...state.chatHistory, userMsg]
+    }));
 
-    const lower = text.toLowerCase();
-    if (lower.includes("seat") || lower.includes("guide")) {
-      responseText = "Your ticket is for Sector 108, Row H, Seat 14. Gate 4 entrance is the closest standard gate, but due to current queue times, I recommend entering through Gate 6 and walking along the lower concourse corridor.";
-      routeData = {
-        estimatedTime: "6 mins walk",
-        accessibilityInfo: "Step-free routing available. Direct escalator nearby is operating.",
-        routeType: "Fastest Path (Recommended)",
-        hasEmergencyShortcut: false
-      };
-    } else if (lower.includes("halal") || lower.includes("food") || lower.includes("vegetarian")) {
-      responseText = "Found: 'Medina Grill' (Halal Mediterranean, Concourse 1 East, 3 min walk) and 'Green Field Concessions' (Vegetarian & Vegan wraps, Concourse 2 North, 5 min walk). The queue at Medina Grill is currently under 4 minutes.";
-      routeData = {
-        estimatedTime: "3 mins walk",
-        accessibilityInfo: "Fully accessible elevator access through elevator E-1.",
-        routeType: "Least Crowded Route",
-        hasEmergencyShortcut: false
-      };
-    } else if (lower.includes("wheelchair") || lower.includes("lift") || lower.includes("elevator")) {
-      responseText = "Access Alert: Elevator B-3 is experiencing a temporary blockage. I have generated a custom step-free route using South Ramp 3 to the lower concourse, leading directly to the accessible seating area in Sector 204.";
-      routeData = {
-        estimatedTime: "8 mins walk",
-        accessibilityInfo: "100% ADA compliant route. Ramps do not exceed 1:12 slope ratio.",
-        routeType: "Wheelchair Friendly Path",
-        hasEmergencyShortcut: false
-      };
-    } else if (lower.includes("restroom") || lower.includes("toilet") || lower.includes("washroom")) {
-      responseText = "Restroom status updated: The nearest restrooms in Sector 109 are currently at 85% occupancy. I recommend restrooms in Sector 107 (40m west), which are currently at 15% occupancy (0 wait time).";
-      routeData = {
-        estimatedTime: "1.5 mins walk",
-        accessibilityInfo: "Companion restrooms and changing tables available.",
-        routeType: "Least Crowded Route",
-        hasEmergencyShortcut: false
-      };
-    } else if (lower.includes("child") || lower.includes("missing") || lower.includes("lost")) {
-      responseText = "[EMERGENCY ADVISE] A child missing report has been flagged to Security Command. Please stand by your current location near Sector 108. A designated volunteer is heading to your exact seat coordinates. Broadcast is active.";
-      routeData = {
-        estimatedTime: "1 min response",
-        accessibilityInfo: "Security personnel dispatched.",
-        routeType: "Emergency Direct Connect",
-        hasEmergencyShortcut: true
-      };
-    } else if (lower.includes("exit") || lower.includes("leave")) {
-      responseText = "Personalized Exit Recommendation: Due to congestion at Metro Station East, the safest and fastest exit strategy is through the West Gates towards Car Park B or Shuttle Bus Terminal 1.";
-      routeData = {
-        estimatedTime: "9 mins walk",
-        accessibilityInfo: "Emergency pathway lighting activated on west ramp.",
-        routeType: "Safest Exit Path",
-        hasEmergencyShortcut: true
-      };
-    } else if (lower.includes("medical") || lower.includes("doctor") || lower.includes("hurt")) {
-      responseText = "Emergency Route: Medical Station North is located in the Main Concourse behind Sector 112. First aid staff M-4 has also been alerted and can navigate to you.";
-      routeData = {
-        estimatedTime: "2 mins walk",
-        accessibilityInfo: "Defibrillator (AED) and emergency kit stationed at Sector 112 column.",
-        routeType: "Safest Route",
-        hasEmergencyShortcut: true
-      };
-    } else {
-      responseText = "StadiaX AI has logged your request. Checking live stadium metrics. Sector 108 is operating normally, all facilities nearby are open. You can ask for directions, food suggestions, accessibility routes, or emergency help.";
+    const placeholderId = `chat-placeholder-${Date.now()}`;
+    const placeholderMsg: ChatMessage = {
+      id: placeholderId,
+      sender: "ai",
+      text: "StadiaX AI is thinking...",
+      timestamp: timeStr
+    };
+
+    set((state) => ({
+      chatHistory: [...state.chatHistory, placeholderMsg]
+    }));
+
+    let responseText = "";
+    let routeData = null;
+
+    try {
+      const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
+      if (!apiKey) {
+        throw new Error("NEXT_PUBLIC_GEMINI_API_KEY is not set");
+      }
+
+      const activeIncidents = useStadiaStore.getState().incidents.filter(i => i.status !== "Resolved");
+      const simulationMode = useStadiaStore.getState().simulationMode;
+      const matchScore = useStadiaStore.getState().matchScore;
+      const matchMinute = useStadiaStore.getState().matchMinute;
+
+      const prompt = `
+You are the StadiaX AI Fan Concierge, an autonomous stadium assistant for the FIFA World Cup 2026.
+Your tone is helpful, professional, and futuristic.
+
+Stadium Context:
+- Current Match: Argentina vs France (${matchScore}, ${matchMinute}')
+- Operational Mode: ${simulationMode}
+- Active Incidents: ${activeIncidents.map(i => `${i.title} at ${i.location}`).join(", ") || "None"}
+
+User Query: "${text}"
+
+Answer the user query. Keep your response relatively concise (2-4 sentences max). If they ask for directions, food recommendations, or assistance, tailor it to their request. If relevant, output a JSON block at the very end of your response with route telemetry in this exact format:
+\`\`\`json
+{
+  "estimatedTime": "X mins walk",
+  "accessibilityInfo": "X accessibility status",
+  "routeType": "X route type",
+  "hasEmergencyShortcut": true/false
+}
+\`\`\`
+Do not include any extra fields in the JSON.
+`;
+
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent?key=${apiKey}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const rawText = data.candidates?.[0]?.content?.parts?.[0]?.text || "No response received.";
+      
+      const jsonRegex = /```json\s*([\s\S]*?)\s*```/;
+      const match = rawText.match(jsonRegex);
+      responseText = rawText.replace(jsonRegex, "").trim();
+
+      if (match && match[1]) {
+        try {
+          routeData = JSON.parse(match[1].trim());
+        } catch (e) {
+          console.error("Failed to parse route data JSON", e);
+        }
+      }
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      responseText = "I'm experiencing connectivity issues with the StadiaX operations grid. Please standby.";
     }
 
-    const aiMsg: ChatMessage = {
-      id: `chat-${Date.now() + 1}`,
-      sender: "ai",
-      text: responseText,
-      timestamp: timeStr,
-      routeData
-    };
-
-    return {
-      chatHistory: [...state.chatHistory, userMsg, aiMsg]
-    };
-  }),
+    set((state) => {
+      const updatedHistory = state.chatHistory.map((msg) => {
+        if (msg.id === placeholderId) {
+          return {
+            ...msg,
+            text: responseText,
+            routeData
+          };
+        }
+        return msg;
+      });
+      return { chatHistory: updatedHistory };
+    });
+  },
 
   tickMatchTime: () => set((state) => {
     const nextMin = state.matchMinute >= 90 ? 1 : state.matchMinute + 1;
@@ -472,6 +516,8 @@ export const useStadiaStore = create<StadiaState>((set) => ({
   }),
 
   setSelectedSector: (sector) => set({ selectedSector: sector }),
-  setSelectedGate: (gate) => set({ selectedGate: gate })
+  setSelectedGate: (gate) => set({ selectedGate: gate }),
+  setUser: (user) => set({ user }),
+  setAuthLoading: (authLoading) => set({ authLoading })
 }));
 

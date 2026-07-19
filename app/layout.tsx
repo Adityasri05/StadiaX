@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk, JetBrains_Mono } from "next/font/google";
 import { Toaster } from "react-hot-toast";
+import AuthSync from "@/components/auth-sync";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,6 +36,7 @@ export default function RootLayout({
       style={{ colorScheme: "dark" }}
     >
       <body className="min-h-full bg-[#07111F] text-[#F8FAFC] font-sans antialiased overflow-x-hidden">
+        <AuthSync />
         {children}
         <Toaster
           position="top-right"

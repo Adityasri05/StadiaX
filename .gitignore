@@ -48,4 +48,9 @@ next-env.d.ts
 __pycache__/
 *.pyc
 
+# IDE and local agent configs
+.agents/
+.claude/
+.firebase/
+
 

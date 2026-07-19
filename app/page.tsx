@@ -22,7 +22,7 @@ import {
 import toast from "react-hot-toast";
 
 export default function LandingPage() {
-  const { simulationMode } = useStadiaStore();
+  const { simulationMode, user, authLoading } = useStadiaStore();
 
   const stats = [
     { value: "104", label: "Matches scheduled", suffix: "" },
@@ -122,12 +122,26 @@ export default function LandingPage() {
           <span className="text-xs font-mono text-[#94A3B8] hidden sm:inline-block bg-[#101C2D] border border-white/5 px-3 py-1.5 rounded">
             FIFA 2026 AUDIT: PASS
           </span>
-          <Link
-            href="/mission-control"
-            className="px-4 py-2 text-xs font-mono font-bold tracking-widest text-[#00E5FF] bg-[rgba(0,229,255,0.1)] border border-[#00E5FF]/30 rounded-md hover:bg-[#00E5FF]/20 hover:border-[#00E5FF]/60 hover:shadow-[0_0_15px_rgba(0,229,255,0.25)] transition-all"
-          >
-            LAUNCH COCKPIT
-          </Link>
+          {!authLoading && user ? (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-mono text-[#94A3B8] hidden md:inline-block bg-[rgba(16,28,45,0.6)] border border-white/5 px-3 py-1.5 rounded">
+                OPERATOR: <span className="text-[#00E5FF] font-semibold">{user.displayName || user.email?.split("@")[0]}</span>
+              </span>
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 text-xs font-mono font-bold tracking-widest text-[#00D084] bg-[rgba(0,208,132,0.1)] border border-[#00D084]/30 rounded-md hover:bg-[#00D084]/20 hover:border-[#00D084]/60 hover:shadow-[0_0_15px_rgba(0,208,132,0.25)] transition-all"
+              >
+                GO TO COCKPIT
+              </Link>
+            </div>
+          ) : (
+            <Link
+              href="/auth"
+              className="px-4 py-2 text-xs font-mono font-bold tracking-widest text-[#00E5FF] bg-[rgba(0,229,255,0.1)] border border-[#00E5FF]/30 rounded-md hover:bg-[#00E5FF]/20 hover:border-[#00E5FF]/60 hover:shadow-[0_0_15px_rgba(0,229,255,0.25)] transition-all"
+            >
+              SIGN IN
+            </Link>
+          )}
         </div>
       </header>
 

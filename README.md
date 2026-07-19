@@ -93,9 +93,9 @@ NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_google_maps_key
 
 # Firebase SDK Credentials
 NEXT_PUBLIC_FIREBASE_API_KEY=your_firebase_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=stadiax-2026-pro.firebaseapp.com
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=stadiax-2026-pro
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=stadiax-2026-pro.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=stadiax-c8ab0.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=stadiax-c8ab0
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=stadiax-c8ab0.firebasestorage.app
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```

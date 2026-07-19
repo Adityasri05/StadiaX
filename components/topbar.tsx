@@ -16,9 +16,13 @@ import {
   Clock,
   MapPin,
   ChevronDown,
-  Cpu
+  Cpu,
+  LogOut,
+  Shield
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 export default function Topbar() {
   const router = useRouter();
@@ -33,6 +37,8 @@ export default function Topbar() {
     setSimulationMode,
     tickMatchTime,
     sendConciergeMessage,
+    user,
+    setUser,
   } = useStadiaStore();
 
   const [aiInput, setAiInput] = useState("");
@@ -41,8 +47,10 @@ export default function Topbar() {
   const [selectedLang, setSelectedLang] = useState("EN");
   const [selectedHost, setSelectedHost] = useState("USA");
   const [showHostDropdown, setShowHostDropdown] = useState(false);
+  const [showProfileDropdown, setShowProfileDropdown] = useState(false);
   
   const notificationRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
 
   // Tick match time in background
   useEffect(() => {
@@ -52,11 +60,14 @@ export default function Topbar() {
     return () => clearInterval(timer);
   }, [tickMatchTime]);
 
-  // Click outside notification dropdown to close
+  // Click outside notification or profile dropdown to close
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
         setShowNotifications(false);
+      }
+      if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
+        setShowProfileDropdown(false);
       }
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -334,13 +345,85 @@ export default function Topbar() {
           )}
         </div>
 
-        {/* Profile Button */}
-        <button
-          onClick={() => toast.success("Connected as FIFA Operator #482", { icon: "🔑" })}
-          className="w-9 h-9 rounded-full bg-gradient-to-tr from-[rgba(0,229,255,0.1)] to-[rgba(59,130,246,0.1)] border border-[rgba(0,229,255,0.2)] flex items-center justify-center text-[#00E5FF] hover:shadow-[0_0_12px_rgba(0,229,255,0.2)] transition-all"
-        >
-          <User className="w-4 h-4" />
-        </button>
+        {/* Profile Menu & Dropdown */}
+        {user && (
+          <div className="relative" ref={profileRef}>
+            <button
+              onClick={() => {
+                setShowProfileDropdown(!showProfileDropdown);
+                setShowLangDropdown(false);
+                setShowHostDropdown(false);
+                setShowNotifications(false);
+              }}
+              className="w-9 h-9 rounded-full bg-gradient-to-tr from-[rgba(0,229,255,0.1)] to-[rgba(59,130,246,0.1)] border border-[rgba(0,229,255,0.2)] flex items-center justify-center text-[#00E5FF] hover:shadow-[0_0_12px_rgba(0,229,255,0.2)] transition-all overflow-hidden cursor-pointer"
+            >
+              {user.photoURL ? (
+                <img
+                  src={user.photoURL}
+                  alt={user.displayName || "User"}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <span className="font-mono font-bold text-xs uppercase">
+                  {(user.displayName || user.email || "OP").substring(0, 2)}
+                </span>
+              )}
+            </button>
+
+            {/* Profile Dropdown menu */}
+            {showProfileDropdown && (
+              <div className="absolute right-0 mt-2.5 w-64 bg-[#132238] border border-[rgba(0,229,255,0.2)] rounded-xl shadow-[0_10px_40px_rgba(7,17,31,0.8)] backdrop-blur-md overflow-hidden z-50">
+                <div className="p-4 bg-[rgba(16,28,45,0.8)] border-b border-[rgba(248,250,252,0.05)]">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#00E5FF] to-[#3B82F6] flex items-center justify-center text-[#07111F] font-heading font-bold text-sm overflow-hidden select-none">
+                      {user.photoURL ? (
+                        <img src={user.photoURL} alt={user.displayName || "User"} className="w-full h-full object-cover" />
+                      ) : (
+                        (user.displayName || user.email || "OP").substring(0, 2).toUpperCase()
+                      )}
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-xs font-bold text-[#F8FAFC] truncate">
+                        {user.displayName || "StadiaX Operator"}
+                      </span>
+                      <span className="text-[10px] font-mono text-[#94A3B8] truncate">
+                        {user.email}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="p-2 space-y-1">
+                  <div className="px-3 py-2 flex items-center gap-2 text-xs font-mono text-[#94A3B8]">
+                    <Shield className="w-3.5 h-3.5 text-[#00E5FF]" />
+                    <span>ROLE: Lead FIFA Operator</span>
+                  </div>
+                  <div className="px-3 py-1.5 flex items-center justify-between text-[10px] font-mono text-[#94A3B8] bg-[rgba(7,17,31,0.3)] rounded border border-white/5 mx-1">
+                    <span>SECURITY GRID</span>
+                    <span className="text-[#00D084] font-bold">ONLINE</span>
+                  </div>
+
+                  <button
+                    onClick={async () => {
+                      try {
+                        await signOut(auth);
+                        setUser(null);
+                        toast.success("Logged out successfully.");
+                        router.push("/auth");
+                      } catch (error) {
+                        toast.error("Logout failed.");
+                      }
+                    }}
+                    className="w-full px-3 py-2 flex items-center gap-2 text-xs font-mono text-[#FF4D6D] hover:bg-[rgba(255,77,109,0.08)] rounded transition-all text-left cursor-pointer"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>SIGN OUT SYSTEM</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </header>
   );
