@@ -18,7 +18,7 @@ import {
   Activity,
   ExternalLink
 } from "lucide-react";
-import toast from "react-hot-toast";
+
 
 export default function LandingPage() {
   const { user, authLoading } = useStadiaStore();
@@ -186,7 +186,7 @@ export default function LandingPage() {
           </a>
           <button
             onClick={() => {
-              toast("Loading video telemetry feed...", { icon: "📹" });
+              window.open("https://drive.google.com/file/d/1EDoZPz7gCmqWPVeK3Hwivyr-vyES8DjI/view?usp=sharing", "_blank", "noopener,noreferrer");
             }}
             className="w-full sm:w-auto px-8 py-4 bg-transparent text-[#94A3B8] hover:text-white transition-all flex items-center justify-center gap-2 group"
           >
