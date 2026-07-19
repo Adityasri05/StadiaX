@@ -14,10 +14,18 @@ import {
 import toast from "react-hot-toast";
 
 interface MapVisualizerProps {
+  /** If true, expands the map visualizer to take up full available layout container dimensions */
   fullscreen?: boolean;
 }
 
+/**
+ * MapVisualizer Component
+ * Renders the interactive 2D vector SVG stadium blueprint overlaying seats,
+ * entrances, gates, elevators, first-aid, food zones, and evacuations.
+ * Subscribes to mapLayers, selected sector, selected gate, and path overlays.
+ */
 export default function MapVisualizer({ fullscreen = false }: MapVisualizerProps) {
+
   const {
     mapLayers,
     selectedSector,

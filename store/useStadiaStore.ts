@@ -1,21 +1,32 @@
 import { create } from "zustand";
+import {
+  SimulationMode,
+  RouteType,
+  IncidentPriority,
+  IncidentStatus,
+  IncidentCategory,
+  AgentStatus,
+  AgentPriority,
+  TransitStatus,
+  MessageSender
+} from "@/types";
 
-/** Represents a active or resolved security/operational incident in the stadium. */
+/** Represents an active or resolved security/operational incident in the stadium. */
 export interface Incident {
   /** Unique incident identifier */
   id: string;
   /** Summary of the incident */
   title: string;
   /** Urgency level for operational resolution */
-  priority: "high" | "medium" | "low";
+  priority: IncidentPriority;
   /** Specific sector, gate, or concourse */
   location: string;
   /** Time of trigger in HH:MM format */
   time: string;
   /** Current state of operational response */
-  status: "Active" | "Resolving" | "Resolved";
+  status: IncidentStatus;
   /** Category of the alert for routing to correct sub-teams */
-  category: "Crowd" | "Accessibility" | "Security" | "Vendor" | "Transit" | "Medical" | "Sustainability" | "Operations";
+  category: IncidentCategory;
   /** Recommended procedure to mitigate the incident */
   actionRecommended: string;
 }
@@ -29,13 +40,13 @@ export interface AIAgent {
   /** Human-readable module title */
   title: string;
   /** Active status of the agent's processes */
-  status: "Analyzing" | "Resolving" | "Alerting" | "Idle";
+  status: AgentStatus;
   /** Live reasoning telemetry displayed in the cockpit */
   currentReasoning: string;
   /** Model confidence score in decimals/percentage */
   confidenceScore: number;
   /** Agent alert priority */
-  priority: "High" | "Normal" | "Low";
+  priority: AgentPriority;
   /** Action recommended or executed by the agent */
   action: string;
   /** Project metric improvement */
@@ -47,7 +58,7 @@ export interface ChatMessage {
   /** Unique message identifier */
   id: string;
   /** Message sender */
-  sender: "user" | "ai";
+  sender: MessageSender;
   /** Text content of the message */
   text: string;
   /** Timestamp in HH:MM format */
@@ -97,9 +108,9 @@ interface StadiaState {
   /** Local weather temperature */
   weatherTemp: string;
   /** Operational state of local metro/shuttle connections */
-  transitStatus: "Normal" | "Delayed" | "Critical";
+  transitStatus: TransitStatus;
   /** Selected simulation profile mode */
-  simulationMode: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy";
+  simulationMode: SimulationMode;
   
   // Lists
   /** Active and resolved incidents list */
@@ -117,7 +128,7 @@ interface StadiaState {
   /** Selected sector context */
   selectedSector: string | null;
   /** Active pathfinding overlays projected on the map */
-  activeRouteType: "shortest" | "fastest" | "safest" | "wheelchair" | "family" | "least_crowded" | null;
+  activeRouteType: RouteType | null;
 
   // Actions
   /** Resolve an incident and decrease alerts counter */
@@ -129,15 +140,16 @@ interface StadiaState {
   /** File a new custom operational incident */
   addIncident: (incident: Incident) => void;
   /** Set the simulation mode and trigger preset events */
-  setSimulationMode: (mode: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy") => void;
+  setSimulationMode: (mode: SimulationMode) => void;
   /** Toggle visibility of a specific layer on the 3D map */
   toggleMapLayer: (layer: keyof MapLayers) => void;
   /** Project an active pathfinding path onto the map */
-  setMapActiveRoute: (routeType: "shortest" | "fastest" | "safest" | "wheelchair" | "family" | "least_crowded" | null) => void;
+  setMapActiveRoute: (routeType: RouteType | null) => void;
   /** Send message to Gemini Fan Concierge API and handle response */
   sendConciergeMessage: (text: string) => Promise<void>;
   /** Update match clock and fluctuate telemetry realistically */
   tickMatchTime: () => void;
+
   /** Set currently focused sector */
   setSelectedSector: (sector: string | null) => void;
   /** Set currently focused gate */

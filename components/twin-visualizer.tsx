@@ -6,10 +6,18 @@ import * as THREE from "three";
 import { AlertTriangle } from "lucide-react";
 
 interface TwinVisualizerProps {
+  /** The simulation profile state determining particle flow color and layout structures */
   simulationState: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy";
 }
 
+/**
+ * TwinVisualizer Component
+ * Instantiates a 3D WebGL Three.js canvas showcasing interactive stadium wireframes.
+ * Simulates real-time crowd movement streams as glowing particle swarms
+ * representing fans moving dynamically based on active simulation overlays.
+ */
 export default function TwinVisualizer({ simulationState }: TwinVisualizerProps) {
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [webglError, setWebglError] = useState(false);
 

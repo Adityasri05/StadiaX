@@ -1,11 +1,18 @@
 # StadiaX — The Autonomous AI Operating System for Smart Stadiums
 
-[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat&logo=next.js)](https://nextjs.org/)
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat&logo=next.js)](https://nextjs.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-v0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com/)
 [![Firebase](https://img.shields.io/badge/Firebase-Project-FFCA28?style=flat&logo=firebase)](https://firebase.google.com/)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **StadiaX** is an enterprise-grade AI operational intelligence platform purpose-built for the **FIFA World Cup 2026** and future mega sporting events. Designed to resemble a real-time FIFA Command Center, StadiaX connects Fans, Stadium Operators, Security Teams, Volunteers, Transit Authorities, Concessions Vendors, and Medical/Accessibility units into a single unified AI-driven operating network.
+
+---
+
+## 🎯 Production Live Environment
+
+* **Live Telemetry Cockpit URL:** [https://stadiax-c8ab0.web.app](https://stadiax-c8ab0.web.app)
+* **GitHub Codebase:** [https://github.com/Adityasri05/StadiaX](https://github.com/Adityasri05/StadiaX)
 
 ---
 
@@ -43,7 +50,7 @@ Service              Service           Service            Service
 ## ⚡ Technical Stack
 
 ### Frontend Client
-* **Framework:** Next.js 15 (App Router, Server-Safe Client Rendering).
+* **Framework:** Next.js 16 (App Router, Server-Safe Client Rendering).
 * **State Management:** Zustand (reactive stores for telemetry and event routing).
 * **3D Visualizer:** WebGL Three.js Stadium wireframes with particle swarm simulations.
 * **Interactive Map:** Asynchronous vector SVG stadium layout with layer managers.
@@ -59,25 +66,30 @@ Service              Service           Service            Service
 
 ---
 
-## 🧠 LangGraph Multi-Agent Orchestration
+## 🤖 Gemini AI Integration
+StadiaX integrates Gemini AI to power the **AI Fan Concierge** module:
+* **Model:** `gemini-2.5-flash-lite` (highly optimized, low-latency multimodal reasoning).
+* **Context Ingestion:** The agent pulls live context from the stadium operations grid, including current match time/score, active stadium simulation mode, and live incidents list.
+* **Route Generation**: If users request help navigating the stadium, the assistant outputs a structured JSON block containing route telemetry (estimated walk times, wheelchair accessibility parameters, and emergency bypass updates) which is then projected onto the 2D vector map layout in real-time.
 
-All cognitive requests ingested through the AI Gateway pass through a parallel LangGraph-style pipeline:
+---
 
-1. **Intent Extraction:** Evaluates user query coordinates and determines active agents.
-2. **Context Retrieval:** Queries the Qdrant memory database for historical preference vectors and short-term dialogue context.
-3. **Agent Node Execution:** Spawns parallel async workers for selected agents:
-   * **X-Fan:** Guides seat routes, catering lists, and accessibility support.
-   * **X-Crowd:** Analyzes camera sensors and forecasts gate wait times.
-   * **X-Secure:** Governs threat logs and maps evacuation strategies.
-   * **X-Transit:** Coordinates train headways and shuttle loops.
-   * **X-Volunteer:** Rosters and routes staff dispatches.
-   * **X-Assist:** Directs step-free wheelchair routing.
-   * **X-Ops:** Handles utility HVAC limits and cooling thresholds.
-   * **X-Vendor:** Forecasts concession POS supply alerts.
-   * **X-Green:** Measures solar battery offsets and sorting scores.
-4. **Conflict Resolution Node:** Intercepts agent results to resolve policy clashes (e.g., overriding a transit egress route if a security zone is blocked).
-5. **Memory Commit:** Vector-encodes chat history back to Qdrant.
-6. **Response Schema:** Delivers standard JSON response containing evidence, confidence, actions list, and estimated impact.
+## 🧪 Unit & Component Testing
+The project includes a robust testing suite containing **27 unit & component tests** built on top of **Vitest** and **React Testing Library**:
+* **Testing Engine**: Vitest (featuring jsdom environment and Vite path alias resolution).
+* **Mock Environment**: Mocked Canvas contexts (for Three.js and background visualizers) and Firebase Client SDK components.
+* **Coverage Scope**:
+  - `store.test.ts`: Zustand store mutations (match minute ticking, incident resolution, map layers).
+  - `error-boundary.test.tsx`: Exploding React components rendering containment and system reinitializations.
+  - `topbar.test.tsx`: Top bar layout rendering, accessibility `aria-label` values, and language listbox controls.
+  - `sidebar.test.tsx`: Sidebar items and dynamic state incident counter badge values.
+  - `landing.test.tsx`: Feature modules rendering grids and direct auth paths.
+  - `auth.test.tsx`: Tab-based login/signup toggles and input validations.
+
+To run the full test suite locally:
+```bash
+npm run test
+```
 
 ---
 
@@ -100,7 +112,7 @@ NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 ```
 
-### 2. Start the Backend Server (Local Mode)
+### 2. Start the Backend Server (Local Mock Mode)
 To run the backend instantly without setting up external Redis or Qdrant databases:
 ```bash
 cd backend
@@ -125,7 +137,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the StadiaX command 
 
 ---
 
-## 🧪 Testing the Event Pipeline
+## ⚡ Testing the Event Pipeline
 Test the real-time event broadcaster using curl:
 ```bash
 curl -X POST http://localhost:8000/api/v1/security/incident \

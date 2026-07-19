@@ -7,11 +7,18 @@ import Sidebar from "@/components/sidebar";
 import Topbar from "@/components/topbar";
 import { Cpu } from "lucide-react";
 
+/**
+ * CommandCenterLayout Component
+ * Renders the dashboard shell including the global top navigation bar,
+ * the operational sidebar, and the main viewport space.
+ * Enforces authentication: redirects unauthorized requests to the /auth terminal.
+ */
 export default function CommandCenterLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+
   const router = useRouter();
   const { user, authLoading } = useStadiaStore();
 

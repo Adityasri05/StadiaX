@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import Topbar from "../components/topbar";
 
@@ -39,5 +39,25 @@ describe("Topbar Component", () => {
     
     const bellBtn = screen.getByRole("button", { name: /System Notifications/ });
     expect(bellBtn).toBeInTheDocument();
+  });
+
+  it("renders the AI command input form field", () => {
+    render(<Topbar />);
+    
+    const input = screen.getByPlaceholderText(/Universal AI Command.../i);
+    expect(input).toBeInTheDocument();
+  });
+
+  it("opens language selector listbox dropdown on click", () => {
+    render(<Topbar />);
+    
+    const langBtn = screen.getByLabelText(/Select Language/i);
+    expect(langBtn).toBeInTheDocument();
+    
+    // Toggle dropdown open
+    fireEvent.click(langBtn);
+    
+    expect(screen.getByRole("listbox")).toBeInTheDocument();
+    expect(screen.getByRole("option", { name: /English/i })).toBeInTheDocument();
   });
 });

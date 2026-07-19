@@ -1,17 +1,27 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import ErrorBoundary from "../components/error-boundary";
 
-// Suppress console.error inside testing logs for expected component throws
-const originalConsoleError = console.error;
-console.error = vi.fn();
-
+// Exploding Component for testing ErrorBoundary catch behavior
 const ExplodingComponent = () => {
   throw new Error("Triggered rendering collision");
 };
 
 describe("ErrorBoundary Component", () => {
+  let originalError: typeof console.error;
+
+  beforeAll(() => {
+    // Suppress React error logs in console during explosion testing
+    originalError = console.error;
+    console.error = vi.fn();
+  });
+
+  afterAll(() => {
+    // Restore original console error function
+    console.error = originalError;
+  });
+
   it("renders children normally when no error is present", () => {
     render(
       <ErrorBoundary>
@@ -58,6 +68,3 @@ describe("ErrorBoundary Component", () => {
     expect(screen.getByText("Recovered System")).toBeInTheDocument();
   });
 });
-
-// Restore original console.error
-console.error = originalConsoleError;

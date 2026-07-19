@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { useStadiaStore } from "../store/useStadiaStore";
+import { Incident } from "../store/useStadiaStore";
 
 describe("StadiaX Zustand Store", () => {
   beforeEach(() => {
@@ -9,6 +10,9 @@ describe("StadiaX Zustand Store", () => {
       matchMinute: 74,
       attendance: 88450,
       activeAlertsCount: 2,
+      selectedSector: null,
+      selectedGate: null,
+      activeRouteType: null,
       incidents: [
         {
           id: "inc-1",
@@ -87,6 +91,16 @@ describe("StadiaX Zustand Store", () => {
     expect(state.attendance).toBeLessThanOrEqual(88500);
   });
 
+  it("should wrap match minute back to 1 at minute 90", () => {
+    useStadiaStore.setState({ matchMinute: 90 });
+    const { tickMatchTime } = useStadiaStore.getState();
+    
+    tickMatchTime();
+    
+    const state = useStadiaStore.getState();
+    expect(state.matchMinute).toBe(1);
+  });
+
   it("should resolve an incident correctly and decrement active alerts count", () => {
     const stateBefore = useStadiaStore.getState();
     const incidentToResolve = stateBefore.incidents[0];
@@ -103,5 +117,47 @@ describe("StadiaX Zustand Store", () => {
     expect(resolvedIncident?.status).toBe("Resolved");
     expect(stateAfter.activeAlertsCount).toBe(1);
     expect(stateAfter.activeAlertsCount).toBeLessThan(initialActiveCount);
+  });
+
+  it("should successfully add a new incident via addIncident action", () => {
+    const newInc: Incident = {
+      id: "inc-3",
+      title: "Broken seating row 12",
+      priority: "low",
+      location: "Sector 102",
+      time: "14:50",
+      status: "Active",
+      category: "Operations",
+      actionRecommended: "Inform cleaning & repair team."
+    };
+
+    const { addIncident } = useStadiaStore.getState();
+    addIncident(newInc);
+
+    const state = useStadiaStore.getState();
+    expect(state.incidents.length).toBe(3);
+    expect(state.activeAlertsCount).toBe(3);
+  });
+
+  it("should successfully dismiss/delete an incident via dismissIncident", () => {
+    const { dismissIncident } = useStadiaStore.getState();
+    dismissIncident("inc-1");
+
+    const state = useStadiaStore.getState();
+    expect(state.incidents.length).toBe(1);
+    expect(state.activeAlertsCount).toBe(1);
+  });
+
+  it("should select map elements and active routing paths", () => {
+    const { setSelectedSector, setSelectedGate, setMapActiveRoute } = useStadiaStore.getState();
+
+    setSelectedSector("Sector 104");
+    setSelectedGate("Gate 2");
+    setMapActiveRoute("fastest");
+
+    const state = useStadiaStore.getState();
+    expect(state.selectedSector).toBe("Sector 104");
+    expect(state.selectedGate).toBe("Gate 2");
+    expect(state.activeRouteType).toBe("fastest");
   });
 });
