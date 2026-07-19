@@ -103,6 +103,7 @@ interface StadiaState {
     photoURL: string | null;
   } | null) => void;
   setAuthLoading: (loading: boolean) => void;
+  loginAsDemo: () => void;
 }
 
 const initialIncidents: Incident[] = [
@@ -518,6 +519,18 @@ Do not include any extra fields in the JSON.
   setSelectedSector: (sector) => set({ selectedSector: sector }),
   setSelectedGate: (gate) => set({ selectedGate: gate }),
   setUser: (user) => set({ user }),
-  setAuthLoading: (authLoading) => set({ authLoading })
+  setAuthLoading: (authLoading) => set({ authLoading }),
+  loginAsDemo: () => {
+    const demoUser = {
+      uid: "demo-operator-101",
+      email: "demo.operator@stadiax.io",
+      displayName: "Demo Operator",
+      photoURL: null,
+    };
+    if (typeof window !== "undefined") {
+      localStorage.setItem("stadiax_demo_user", JSON.stringify(demoUser));
+    }
+    set({ user: demoUser, authLoading: false });
+  }
 }));
 

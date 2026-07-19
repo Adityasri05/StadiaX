@@ -406,6 +406,9 @@ export default function Topbar() {
                   <button
                     onClick={async () => {
                       try {
+                        if (typeof window !== "undefined") {
+                          localStorage.removeItem("stadiax_demo_user");
+                        }
                         await signOut(auth);
                         setUser(null);
                         toast.success("Logged out successfully.");
