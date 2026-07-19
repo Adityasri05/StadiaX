@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
+
+
 import {
   HeartHandshake,
   UserCheck,

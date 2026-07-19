@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
 import {
   Leaf,
   Activity,
@@ -10,9 +9,9 @@ import {
   TrendingUp,
   Sliders,
   Sparkles,
-  ArrowRight,
-  RefreshCw
+  ArrowRight
 } from "lucide-react";
+
 import {
   AreaChart,
   Area,

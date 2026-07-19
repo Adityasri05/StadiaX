@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
+
 import {
   Users,
   TrendingUp,
@@ -53,7 +53,6 @@ const queueWaitData = [
 ];
 
 export default function CrowdIntelligencePage() {
-  const { attendance, occupancyRate } = useStadiaStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

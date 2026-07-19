@@ -127,7 +127,7 @@ export default function Topbar() {
       setUser(null);
       toast.success("Logged out successfully.");
       router.push("/auth");
-    } catch (_error) {
+    } catch {
       toast.error("Logout failed.");
     }
   }, [setUser, router]);
@@ -395,6 +395,7 @@ export default function Topbar() {
               aria-expanded={showProfileDropdown}
             >
               {user.photoURL ? (
+                /* eslint-disable-next-line @next/next/no-img-element */
                 <img
                   src={user.photoURL}
                   alt={user.displayName || "User Avatar"}
@@ -414,6 +415,7 @@ export default function Topbar() {
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#00E5FF] to-[#3B82F6] flex items-center justify-center text-[#07111F] font-heading font-bold text-sm overflow-hidden select-none">
                       {user.photoURL ? (
+                        /* eslint-disable-next-line @next/next/no-img-element */
                         <img src={user.photoURL} alt={user.displayName || "User Avatar"} className="w-full h-full object-cover" />
                       ) : (
                         (user.displayName || user.email || "OP").substring(0, 2).toUpperCase()

@@ -9,7 +9,6 @@ import {
   Compass,
   Zap,
   Clock,
-  ExternalLink,
   ArrowRight,
   TrendingUp,
   Gauge
@@ -35,7 +34,7 @@ const trafficForecastData = [
 ];
 
 export default function TransportationPage() {
-  const { transitStatus, parkingAvailability } = useStadiaStore();
+  const { parkingAvailability } = useStadiaStore();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

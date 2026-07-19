@@ -1,17 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
 import {
   Store,
   TrendingUp,
-  AlertTriangle,
   Zap,
   ShoppingBag,
   TrendingDown,
   ArrowRight,
   ClipboardList
 } from "lucide-react";
+
 import {
   AreaChart,
   Area,

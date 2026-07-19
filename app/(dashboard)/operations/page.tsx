@@ -1,18 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
+
 import {
   Settings2,
   CheckSquare,
   Square,
   Sliders,
   Wrench,
-  Thermometer,
   Sparkles,
-  ArrowRight,
-  RefreshCw,
-  Tractor
+  RefreshCw
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -25,7 +22,7 @@ interface OpTask {
 }
 
 export default function OperationsPage() {
-  const { openGates, weatherTemp } = useStadiaStore();
+
   const [tasks, setTasks] = useState<OpTask[]>([
     { id: "op-1", category: "Maintenance", title: "Elevator B-3 Technicians Dispatch", status: "Dispatched", desc: "Contractor is on-site repairing block B hydraulic guide." },
     { id: "op-2", category: "Cleaning", title: "Concourse 2 West Restrooms Sanitization", status: "Attention", desc: "Cleaners flagged for urgent restocking. High occupancy." },

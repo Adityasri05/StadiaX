@@ -7,14 +7,10 @@ import {
   Compass,
   Layers,
   Search,
-  CheckCircle,
-  Clock,
-  Accessibility,
-  Heart,
-  TrendingDown,
   Navigation2,
   X
 } from "lucide-react";
+
 import toast from "react-hot-toast";
 
 export default function FullscreenMapPage() {

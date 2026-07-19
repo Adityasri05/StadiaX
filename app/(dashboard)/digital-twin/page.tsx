@@ -5,14 +5,13 @@ import TwinVisualizer from "@/components/twin-visualizer";
 import {
   Cpu,
   Play,
-  RotateCcw,
   Zap,
   Activity,
-  AlertTriangle,
   Radio,
   Thermometer,
   ShieldAlert
 } from "lucide-react";
+
 import toast from "react-hot-toast";
 
 export default function DigitalTwinPage() {

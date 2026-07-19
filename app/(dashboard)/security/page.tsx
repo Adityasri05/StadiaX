@@ -5,18 +5,16 @@ import { useStadiaStore } from "@/store/useStadiaStore";
 import {
   Eye,
   AlertTriangle,
-  Radio,
   Volume2,
   Video,
-  Shield,
-  Activity,
   Send,
   Languages
 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SecurityPage() {
-  const { incidents, resolveIncident, simulationMode, setSimulationMode } = useStadiaStore();
+  const { simulationMode, setSimulationMode } = useStadiaStore();
+
   const [customAnnouncement, setCustomAnnouncement] = useState("");
   const [activeCam, setActiveCam] = useState<string>("CAM-04");
 
@@ -50,9 +48,7 @@ export default function SecurityPage() {
     setCustomAnnouncement(tpl);
   };
 
-  const activeSecurityIncidents = incidents.filter(
-    (i) => i.status !== "Resolved" && (i.category === "Security" || i.category === "Crowd")
-  );
+
 
   return (
     <div className="space-y-6">

@@ -1,18 +1,16 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useStadiaStore, Incident, AIAgent } from "@/store/useStadiaStore";
+import { useStadiaStore } from "@/store/useStadiaStore";
 import {
   Activity,
   AlertTriangle,
   BrainCircuit,
   Check,
-  Shield,
   Zap,
   Sparkles,
   RefreshCw,
-  Terminal,
-  Play
+  Terminal
 } from "lucide-react";
 import toast from "react-hot-toast";
 
@@ -24,9 +22,9 @@ export default function MissionControlPage() {
     dismissIncident,
     triggerAction,
     simulationMode,
-    setSimulationMode,
     matchMinute
   } = useStadiaStore();
+
 
   const [activeTab, setActiveTab] = useState<"active" | "all">("active");
   const [synapticLatency, setSynapticLatency] = useState(14);

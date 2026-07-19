@@ -1,22 +1,19 @@
 "use client";
 
 import { useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
+
 import {
   Settings,
-  Shield,
-  Sliders,
   Bell,
   Eye,
   Phone,
   Cpu,
-  Save,
-  Languages
+  Save
 } from "lucide-react";
 import toast from "react-hot-toast";
 
 export default function SettingsPage() {
-  const { simulationMode } = useStadiaStore();
+
   const [confidence, setConfidence] = useState(90);
   const [autoEvac, setAutoEvac] = useState(true);
   const [smsAlerts, setSmsAlerts] = useState(true);

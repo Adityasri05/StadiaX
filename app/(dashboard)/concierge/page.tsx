@@ -1,20 +1,18 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useStadiaStore, ChatMessage } from "@/store/useStadiaStore";
+import { useStadiaStore } from "@/store/useStadiaStore";
 import {
-  MessageSquare,
   Mic,
   Send,
   Sparkles,
-  MapPin,
   Clock,
   Accessibility,
   AlertOctagon,
-  ChevronRight,
   Compass,
   Volume2
 } from "lucide-react";
+
 import toast from "react-hot-toast";
 
 export default function FanConciergePage() {
