@@ -1,4 +1,3 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeAll } from "vitest";
 import DashboardPage from "../app/(dashboard)/dashboard/page";
@@ -43,9 +42,10 @@ const mockState = {
 
 // Mock useStadiaStore hook using selector pattern
 vi.mock("../store/useStadiaStore", () => ({
-  useStadiaStore: (selector?: (state: any) => any) => {
+  useStadiaStore: (selector?: (state: Record<string, unknown>) => unknown) => {
     return selector ? selector(mockState) : mockState;
   },
+
 }));
 
 describe("More Dashboard Module Pages", () => {
