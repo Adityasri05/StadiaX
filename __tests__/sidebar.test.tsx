@@ -10,7 +10,7 @@ vi.mock("next/navigation", () => ({
 
 // Mock useStadiaStore state
 vi.mock("../store/useStadiaStore", () => ({
-  useStadiaStore: (selector: any) => {
+  useStadiaStore: (selector: (state: never) => never) => {
     // Provide a mocked list of active incidents with unique counts per category
     const incidents = [
       { id: "1", title: "Crowd congestion", status: "Active", category: "Crowd" },

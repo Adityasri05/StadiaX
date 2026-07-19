@@ -13,7 +13,7 @@ if (typeof window !== "undefined") {
     moveTo: vi.fn(),
     lineTo: vi.fn(),
     clearRect: vi.fn(),
-  }) as any;
+  }) as never;
 
   // Mock requestAnimationFrame & cancelAnimationFrame
   window.requestAnimationFrame = vi.fn().mockReturnValue(1);

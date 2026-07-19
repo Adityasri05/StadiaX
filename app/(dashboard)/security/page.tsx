@@ -100,7 +100,7 @@ export default function SecurityPage() {
                 {/* Camera Feed Watermark */}
                 <div className="absolute top-3 left-3 bg-black/60 px-2 py-0.5 rounded text-[9px] font-mono text-white flex items-center gap-1.5 z-10">
                   <span className={`w-1.5 h-1.5 rounded-full ${cam.status === "Critical" || cam.status === "Alerting" ? "bg-[#FF4D6D] animate-ping" : "bg-[#00D084]"}`} />
-                  {cam.id} // REC
+                  {cam.id} {"// REC"}
                 </div>
 
                 <div className="absolute top-3 right-3 bg-black/60 px-2 py-0.5 rounded text-[9px] font-mono text-[#94A3B8] z-10">

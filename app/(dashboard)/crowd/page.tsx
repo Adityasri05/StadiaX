@@ -56,9 +56,9 @@ export default function CrowdIntelligencePage() {
   const { attendance, occupancyRate } = useStadiaStore();
   const [mounted, setMounted] = useState(false);
 
-  // Client-only mount check to prevent Recharts SSR hydration errors
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   const handleApplyStrategy = (strategy: string) => {

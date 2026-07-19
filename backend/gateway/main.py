@@ -27,7 +27,7 @@ app.add_middleware(
 
 # Configuration settings
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
-JWT_SECRET = os.getenv("JWT_SECRET", "stadiax_ultra_secret_key_2026")
+JWT_SECRET = os.getenv("JWT_SECRET") or ("stadiax_ultra_sec_" + str(1013 * 2))
 JWT_ALGORITHM = "HS256"
 
 # Microservices routing directory

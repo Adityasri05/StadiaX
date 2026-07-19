@@ -4,15 +4,10 @@ import { useState } from "react";
 import { useStadiaStore } from "@/store/useStadiaStore";
 import {
   Accessibility,
-  Eye,
-  Sliders,
   Check,
   AlertTriangle,
-  HelpCircle,
-  Clock,
   Compass,
-  Zap,
-  Ear
+  Zap
 } from "lucide-react";
 import toast from "react-hot-toast";
 

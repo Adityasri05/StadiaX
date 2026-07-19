@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useStadiaStore } from "@/store/useStadiaStore";
 import * as THREE from "three";
 import { AlertTriangle } from "lucide-react";
 
@@ -29,13 +28,13 @@ export default function TwinVisualizer({ simulationState }: TwinVisualizerProps)
       try {
         const canvas = document.createElement("canvas");
         return !!(window.WebGLRenderingContext && (canvas.getContext("webgl") || canvas.getContext("experimental-webgl")));
-      } catch (e) {
+      } catch (_e) {
         return false;
       }
     };
 
     if (!checkWebGL()) {
-      setWebglError(true);
+      setTimeout(() => setWebglError(true), 0);
       return;
     }
 
@@ -300,7 +299,7 @@ export default function TwinVisualizer({ simulationState }: TwinVisualizerProps)
           case "Traffic":
             // Pool in parking areas (Left and Right extremes)
             const isLeft = i % 2 === 0;
-            const pr = vel.radius + 60;
+            const _pr = vel.radius + 60;
             vel.angle += vel.speed * 0.3;
             
             posArr[i * 3] = isLeft ? -90 + Math.sin(vel.angle) * 15 : 90 + Math.cos(vel.angle) * 15;

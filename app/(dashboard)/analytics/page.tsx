@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from "react";
 import {
-  LineChart,
-  Line,
   BarChart,
   Bar,
   XAxis,
@@ -11,14 +9,12 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
   AreaChart,
   Area
 } from "recharts";
-import { LineChart as ChartIcon, Calendar, TrendingUp, AlertOctagon } from "lucide-react";
+import { LineChart as ChartIcon, Calendar } from "lucide-react";
 import toast from "react-hot-toast";
+
 
 const incidentsData = [
   { name: "Crowd", count: 42, color: "#00E5FF" },
@@ -54,7 +50,8 @@ export default function AnalyticsPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const timer = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(timer);
   }, []);
 
   return (

@@ -1,17 +1,9 @@
 "use client";
 
-import { useStadiaStore, Incident } from "@/store/useStadiaStore";
-import {
-  MapPin,
-  Shield,
-  Coffee,
-  Accessibility,
-  Activity,
-  AlertTriangle,
-  HelpCircle,
-  X
-} from "lucide-react";
+import { useStadiaStore } from "@/store/useStadiaStore";
+import { Activity, X } from "lucide-react";
 import toast from "react-hot-toast";
+
 
 interface MapVisualizerProps {
   /** If true, expands the map visualizer to take up full available layout container dimensions */
@@ -33,9 +25,7 @@ export default function MapVisualizer({ fullscreen = false }: MapVisualizerProps
     activeRouteType,
     setSelectedSector,
     setSelectedGate,
-    setMapActiveRoute,
-    simulationMode,
-    incidents
+    simulationMode
   } = useStadiaStore();
 
   const handleSectorClick = (sectorId: string) => {
@@ -67,7 +57,7 @@ export default function MapVisualizer({ fullscreen = false }: MapVisualizerProps
   };
 
   const getGateTelemetry = (gate: string) => {
-    const numbers: Record<string, any> = {
+    const numbers: Record<string, { queueTime: string; flowRate: string; density: string; status: string }> = {
       "Gate 4": { queueTime: "11 mins", flowRate: "35 p/m", density: "Critical (94%)", status: "Bottleneck" },
       "Gate 6": { queueTime: "2 mins", flowRate: "125 p/m", density: "Low (30%)", status: "Clear" },
       "Gate 8": { queueTime: "4 mins", flowRate: "70 p/m", density: "Medium (55%)", status: "Security Sweep" }

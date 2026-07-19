@@ -219,8 +219,8 @@ export default function MissionControlPage() {
           </div>
 
           <div className="flex-1 overflow-y-auto custom-scrollbar p-4 space-y-4 font-mono text-xs text-[#94A3B8] bg-[rgba(7,17,31,0.3)]">
-            <div className="text-[11px] text-[#00E5FF]/60">// Initializing AI agent mesh telemetry... Done.</div>
-            <div className="text-[11px] text-[#00E5FF]/60">// Connecting to FIFA command center gateway... Sync 100%.</div>
+            <div className="text-[11px] text-[#00E5FF]/60">{"// Initializing AI agent mesh telemetry... Done."}</div>
+            <div className="text-[11px] text-[#00E5FF]/60">{"// Connecting to FIFA command center gateway... Sync 100%."}</div>
             
             {simulationMode === "Evacuation" && (
               <div className="bg-[#FF4D6D]/10 border border-[#FF4D6D]/30 p-3 rounded text-[#FF4D6D] text-[11px] space-y-1 animate-pulse">

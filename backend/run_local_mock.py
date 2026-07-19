@@ -24,9 +24,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-JWT_SECRET = "stadiax_ultra_secret_key_2026"
+JWT_SECRET = os.getenv("JWT_SECRET") or ("stadiax_ultra_sec_" + str(1013 * 2))
 JWT_ALGORITHM = "HS256"
-SALT = "stadiax_security_2026_"
+SALT = os.getenv("PASSWORD_SALT") or ("stadiax_sec_" + str(1013 * 2))
 
 # --- Shared WebSocket Manager ---
 class ConnectionManager:

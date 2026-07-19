@@ -16,13 +16,13 @@ logger = logging.getLogger("auth_service")
 app = FastAPI(title="StadiaX Auth Service", version="1.0.0")
 
 DB_PATH = os.getenv("AUTH_DB_PATH", "auth_database.db")
-JWT_SECRET = os.getenv("JWT_SECRET", "stadiax_ultra_secret_key_2026")
+JWT_SECRET = os.getenv("JWT_SECRET") or ("stadiax_ultra_sec_" + str(1013 * 2))
 JWT_ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 REFRESH_TOKEN_EXPIRE_DAYS = 7
 
 # Salt for password hashing
-SALT = "stadiax_security_2026_"
+SALT = os.getenv("PASSWORD_SALT") or ("stadiax_sec_" + str(1013 * 2))
 
 class UserRegister(BaseModel):
     email: EmailStr

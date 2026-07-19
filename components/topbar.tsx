@@ -9,7 +9,6 @@ import {
   Search,
   AlertTriangle,
   Globe,
-  User,
   Sparkles,
   Command,
   CheckCircle,
@@ -128,7 +127,7 @@ export default function Topbar() {
       setUser(null);
       toast.success("Logged out successfully.");
       router.push("/auth");
-    } catch (error) {
+    } catch (_error) {
       toast.error("Logout failed.");
     }
   }, [setUser, router]);
