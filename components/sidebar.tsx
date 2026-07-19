@@ -74,6 +74,7 @@ function SidebarComponent() {
             <Link
               key={item.href}
               href={item.href}
+              aria-label={`${item.label} navigation shortcut${item.badge !== undefined && item.badge > 0 ? `, ${item.badge} active alerts` : ""}`}
               className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm transition-all duration-200 group relative ${
                 isActive
                   ? "bg-[rgba(0,229,255,0.07)] text-[#00E5FF] font-medium border-l-2 border-[#00E5FF] shadow-[inset_4px_0_12px_rgba(0,229,255,0.05)]"
@@ -82,6 +83,7 @@ function SidebarComponent() {
             >
               <div className="flex items-center gap-3">
                 <Icon
+                  aria-hidden="true"
                   className={`w-4 h-4 transition-all duration-200 ${
                     isActive ? "text-[#00E5FF]" : "text-[#94A3B8] group-hover:text-[#F8FAFC]"
                   } ${item.highlight ? "animate-pulse text-[#FF4D6D] group-hover:text-[#FF4D6D]" : ""}`}
@@ -90,6 +92,7 @@ function SidebarComponent() {
                   {item.label}
                 </span>
               </div>
+
               
               {/* Badge indicating active alerts */}
               {item.badge !== undefined && item.badge > 0 ? (
