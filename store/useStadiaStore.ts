@@ -1,33 +1,58 @@
 import { create } from "zustand";
 
+/** Represents a active or resolved security/operational incident in the stadium. */
 export interface Incident {
+  /** Unique incident identifier */
   id: string;
+  /** Summary of the incident */
   title: string;
+  /** Urgency level for operational resolution */
   priority: "high" | "medium" | "low";
+  /** Specific sector, gate, or concourse */
   location: string;
+  /** Time of trigger in HH:MM format */
   time: string;
+  /** Current state of operational response */
   status: "Active" | "Resolving" | "Resolved";
+  /** Category of the alert for routing to correct sub-teams */
   category: "Crowd" | "Accessibility" | "Security" | "Vendor" | "Transit" | "Medical" | "Sustainability" | "Operations";
+  /** Recommended procedure to mitigate the incident */
   actionRecommended: string;
 }
 
+/** Represents one of the 9 specialized StadiaX autonomous AI modules. */
 export interface AIAgent {
+  /** Unique module identifier */
   id: string;
+  /** Code name of the AI agent */
   name: string;
+  /** Human-readable module title */
   title: string;
+  /** Active status of the agent's processes */
   status: "Analyzing" | "Resolving" | "Alerting" | "Idle";
+  /** Live reasoning telemetry displayed in the cockpit */
   currentReasoning: string;
+  /** Model confidence score in decimals/percentage */
   confidenceScore: number;
+  /** Agent alert priority */
   priority: "High" | "Normal" | "Low";
+  /** Action recommended or executed by the agent */
   action: string;
+  /** Project metric improvement */
   estimatedImpact: string;
 }
 
+/** Represents a single message in the Fan Concierge conversation. */
 export interface ChatMessage {
+  /** Unique message identifier */
   id: string;
+  /** Message sender */
   sender: "user" | "ai";
+  /** Text content of the message */
   text: string;
+  /** Timestamp in HH:MM format */
   timestamp: string;
+  /** Optional routing overlay telemetry metadata */
   routeData?: {
     estimatedTime: string;
     accessibilityInfo: string;
@@ -36,6 +61,7 @@ export interface ChatMessage {
   };
 }
 
+/** Holds the visibility toggles for the 3D map canvas. */
 export interface MapLayers {
   seats: boolean;
   entrances: boolean;
@@ -51,59 +77,93 @@ export interface MapLayers {
   crowdHeatmap: boolean;
 }
 
+/** Central state structure for the StadiaX operations grid. */
 interface StadiaState {
   // Live Telemetry
+  /** Current minute of the active FIFA match */
   matchMinute: number;
+  /** Real-time scoreboard score */
   matchScore: string;
+  /** Live attendance inside the stadium gates */
   attendance: number;
+  /** Stadium capacity occupancy rate */
   occupancyRate: number;
+  /** Count of open perimeter gates */
   openGates: number;
+  /** Count of outstanding active incidents */
   activeAlertsCount: number;
-  parkingAvailability: number; // percentage
+  /** Percentage of remaining vacant parking spots */
+  parkingAvailability: number;
+  /** Local weather temperature */
   weatherTemp: string;
+  /** Operational state of local metro/shuttle connections */
   transitStatus: "Normal" | "Delayed" | "Critical";
+  /** Selected simulation profile mode */
   simulationMode: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy";
   
   // Lists
+  /** Active and resolved incidents list */
   incidents: Incident[];
+  /** Special AI agent cockpits state */
   agents: AIAgent[];
+  /** Conversation history for the Fan Concierge chat */
   chatHistory: ChatMessage[];
   
   // Interactive Map Settings
+  /** Visibility map layers map */
   mapLayers: MapLayers;
+  /** Selected gate context */
   selectedGate: string | null;
+  /** Selected sector context */
   selectedSector: string | null;
+  /** Active pathfinding overlays projected on the map */
   activeRouteType: "shortest" | "fastest" | "safest" | "wheelchair" | "family" | "least_crowded" | null;
 
   // Actions
+  /** Resolve an incident and decrease alerts counter */
   resolveIncident: (id: string) => void;
+  /** Dismiss/Delete an incident from the timeline */
   dismissIncident: (id: string) => void;
+  /** Trigger or approve an AI-recommended mitigation action */
   triggerAction: (agentId: string) => void;
+  /** File a new custom operational incident */
   addIncident: (incident: Incident) => void;
+  /** Set the simulation mode and trigger preset events */
   setSimulationMode: (mode: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy") => void;
+  /** Toggle visibility of a specific layer on the 3D map */
   toggleMapLayer: (layer: keyof MapLayers) => void;
+  /** Project an active pathfinding path onto the map */
   setMapActiveRoute: (routeType: "shortest" | "fastest" | "safest" | "wheelchair" | "family" | "least_crowded" | null) => void;
+  /** Send message to Gemini Fan Concierge API and handle response */
   sendConciergeMessage: (text: string) => Promise<void>;
+  /** Update match clock and fluctuate telemetry realistically */
   tickMatchTime: () => void;
+  /** Set currently focused sector */
   setSelectedSector: (sector: string | null) => void;
+  /** Set currently focused gate */
   setSelectedGate: (gate: string | null) => void;
 
   // Authentication State
+  /** Current firebase auth user object */
   user: {
     uid: string;
     email: string | null;
     displayName: string | null;
     photoURL: string | null;
   } | null;
+  /** Flag while firebase verifies credentials */
   authLoading: boolean;
+  /** Action to update user credentials context */
   setUser: (user: {
     uid: string;
     email: string | null;
     displayName: string | null;
     photoURL: string | null;
   } | null) => void;
+  /** Action to toggle auth verification loading spinner */
   setAuthLoading: (loading: boolean) => void;
 }
+
 
 const initialIncidents: Incident[] = [
   {

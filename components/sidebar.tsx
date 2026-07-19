@@ -1,5 +1,6 @@
 "use client";
 
+import React, { useMemo, useCallback } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useStadiaStore } from "@/store/useStadiaStore";
@@ -22,17 +23,24 @@ import {
   Settings,
 } from "lucide-react";
 
-export default function Sidebar() {
+/**
+ * Sidebar component displaying the navigation items of the StadiaX AI cockpit.
+ * Leverages React.memo, useMemo, and useCallback to optimize re-renders and memory efficiency.
+ */
+function SidebarComponent() {
   const pathname = usePathname();
   const incidents = useStadiaStore((state) => state.incidents);
 
   // Group active incidents by category
-  const activeIncidents = incidents.filter((i) => i.status !== "Resolved");
-  const countByCategory = (cat: string) => {
-    return activeIncidents.filter((i) => i.category.toLowerCase() === cat.toLowerCase()).length;
-  };
+  const activeIncidents = useMemo(() => {
+    return incidents.filter((i) => i.status !== "Resolved");
+  }, [incidents]);
 
-  const navItems = [
+  const countByCategory = useCallback((cat: string) => {
+    return activeIncidents.filter((i) => i.category.toLowerCase() === cat.toLowerCase()).length;
+  }, [activeIncidents]);
+
+  const navItems = useMemo(() => [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Mission Control", href: "/mission-control", icon: ShieldAlert, highlight: true },
     { label: "AI Fan Concierge", href: "/concierge", icon: MessageSquareCode },
@@ -49,7 +57,7 @@ export default function Sidebar() {
     { label: "Analytics", href: "/analytics", icon: LineChart },
     { label: "Reports", href: "/reports", icon: FileText },
     { label: "Settings", href: "/settings", icon: Settings },
-  ];
+  ], [countByCategory]);
 
   return (
     <aside className="w-64 bg-glass border-r border-[rgba(248,250,252,0.05)] h-[calc(100vh-4rem)] flex flex-col overflow-y-auto custom-scrollbar shrink-0 select-none z-10">
@@ -118,3 +126,6 @@ export default function Sidebar() {
     </aside>
   );
 }
+
+export const Sidebar = React.memo(SidebarComponent);
+export default Sidebar;

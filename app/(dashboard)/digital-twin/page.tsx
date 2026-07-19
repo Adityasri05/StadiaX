@@ -24,7 +24,7 @@ export default function DigitalTwinPage() {
     transitStatus
   } = useStadiaStore();
 
-  const handleModeChange = (mode: any) => {
+  const handleModeChange = (mode: "Normal" | "Prediction" | "Emergency" | "Evacuation" | "Traffic" | "Energy") => {
     setSimulationMode(mode);
     toast.success(`Simulation mode initialized: ${mode} Mode`, {
       icon: "🕹️"

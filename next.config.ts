@@ -6,6 +6,10 @@ const nextConfig: NextConfig = {
   images: {
     unoptimized: true,
   },
+  // Enable asset compression for optimal network transfers
+  compress: true,
+  // Strict mode for detecting rendering inefficiencies
+  reactStrictMode: true,
 };
 
 export default nextConfig;

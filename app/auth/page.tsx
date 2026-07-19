@@ -17,6 +17,11 @@ import ParticleBg from "@/components/particle-bg";
 import { Mail, Lock, User, ArrowLeft, Cpu, Eye, EyeOff, Loader2 } from "lucide-react";
 import toast from "react-hot-toast";
 
+/** Type guard for Firebase Auth error objects */
+function isFirebaseError(e: unknown): e is { code: string; message: string } {
+  return typeof e === "object" && e !== null && "code" in e;
+}
+
 function AuthFormContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -89,15 +94,17 @@ function AuthFormContent() {
         toast.success(`Operator registration complete. Welcome, ${name}!`, { id: authToast });
       }
       router.push(redirect);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Auth error:", error);
       let errorMsg = "Authentication failed. Please verify credentials.";
-      if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
-        errorMsg = "Invalid email or password configuration.";
-      } else if (error.code === "auth/email-already-in-use") {
-        errorMsg = "This email is already registered.";
-      } else if (error.code === "auth/weak-password") {
-        errorMsg = "Password strength is too low.";
+      if (isFirebaseError(error)) {
+        if (error.code === "auth/user-not-found" || error.code === "auth/wrong-password" || error.code === "auth/invalid-credential") {
+          errorMsg = "Invalid email or password configuration.";
+        } else if (error.code === "auth/email-already-in-use") {
+          errorMsg = "This email is already registered.";
+        } else if (error.code === "auth/weak-password") {
+          errorMsg = "Password strength is too low.";
+        }
       }
       toast.error(errorMsg, { id: authToast });
     } finally {
@@ -121,7 +128,7 @@ function AuthFormContent() {
       });
       toast.success(`Authenticated via Google: ${firebaseUser.displayName}`, { id: authToast });
       router.push(redirect);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Google Auth error:", error);
       toast.error("Google OAuth handshake failed.", { id: authToast });
     } finally {

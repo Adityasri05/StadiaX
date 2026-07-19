@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { useStadiaStore } from "@/store/useStadiaStore";
 import MapVisualizer from "@/components/map-visualizer";
 import {
@@ -19,21 +20,25 @@ import {
 } from "lucide-react";
 import toast from "react-hot-toast";
 
+/**
+ * MainDashboardPage
+ * Renders the mission control center containing live KPIs, the telemetry map,
+ * AI insights, and the operational timeline. Optimized using useMemo to avoid
+ * re-allocating KPI objects, insights, and timelines on every state tick/tickMatchTime.
+ */
 export default function MainDashboardPage() {
-  const {
-    attendance,
-    occupancyRate,
-    openGates,
-    activeAlertsCount,
-    parkingAvailability,
-    weatherTemp,
-    transitStatus,
-    matchScore,
-    matchMinute,
-    simulationMode,
-  } = useStadiaStore();
+  const attendance = useStadiaStore((state) => state.attendance);
+  const occupancyRate = useStadiaStore((state) => state.occupancyRate);
+  const openGates = useStadiaStore((state) => state.openGates);
+  const activeAlertsCount = useStadiaStore((state) => state.activeAlertsCount);
+  const parkingAvailability = useStadiaStore((state) => state.parkingAvailability);
+  const weatherTemp = useStadiaStore((state) => state.weatherTemp);
+  const transitStatus = useStadiaStore((state) => state.transitStatus);
+  const matchScore = useStadiaStore((state) => state.matchScore);
+  const matchMinute = useStadiaStore((state) => state.matchMinute);
+  const simulationMode = useStadiaStore((state) => state.simulationMode);
 
-  const kpis = [
+  const kpis = useMemo(() => [
     {
       title: "Live Attendance",
       value: attendance.toLocaleString(),
@@ -99,24 +104,34 @@ export default function MainDashboardPage() {
       color: "text-[#FF4D6D]",
       border: "border-[#FF4D6D]/20"
     }
-  ];
+  ], [
+    attendance,
+    occupancyRate,
+    openGates,
+    activeAlertsCount,
+    parkingAvailability,
+    weatherTemp,
+    transitStatus,
+    matchScore,
+    matchMinute
+  ]);
 
-  const insights = [
+  const insights = useMemo(() => [
     { text: "Gate 4 congestion predicted within 11 minutes.", priority: "high" },
     { text: "Recommend redirecting visitors through Gate 6.", priority: "medium" },
     { text: "Volunteer Team C should relocate to Sector 112.", priority: "medium" },
     { text: "Parking Lot B nearing capacity (94% occupied).", priority: "low" },
     { text: "Metro Station East expected to overload at match end.", priority: "high" },
     { text: "Food Court C inventory below threshold (Halal items).", priority: "low" }
-  ];
+  ], []);
 
-  const timelineEvents = [
+  const timelineEvents = useMemo(() => [
     { time: "14:44:02", category: "Medical", desc: "Medical Team dispatch confirmed for Sector 112 Row F." },
     { time: "14:42:15", category: "Transit", desc: "Shuttle Loop 12 schedule adjusted to offset Metro East load." },
     { time: "14:41:40", category: "Vendor", desc: "Food Court C vendor flagged restock order #942." },
     { time: "14:40:02", category: "Crowd", desc: "Bypass signages enabled: Redirecting fans to Gate 6." },
     { time: "14:38:50", category: "Security", desc: "Unattended bag isolated near Gate 8. K9 sweep in progress." }
-  ];
+  ], []);
 
   return (
     <div className="space-y-6">

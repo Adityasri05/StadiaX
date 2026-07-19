@@ -147,7 +147,7 @@ export default function FullscreenMapPage() {
                 <div
                   key={route.id}
                   onClick={() => {
-                    setMapActiveRoute(isSelected ? null : (route.id as any));
+                    setMapActiveRoute(isSelected ? null : (route.id as "shortest" | "fastest" | "safest" | "wheelchair" | "family" | "least_crowded"));
                     if (!isSelected) {
                       toast.success(`Calculating ${route.label} overlay path...`, { icon: "🧭" });
                     }
