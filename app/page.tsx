@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useStadiaStore } from "@/store/useStadiaStore";
 import ParticleBg from "@/components/particle-bg";
 import {
@@ -23,23 +22,7 @@ import {
 import toast from "react-hot-toast";
 
 export default function LandingPage() {
-  const router = useRouter();
-  const { simulationMode, user, authLoading, loginAsDemo } = useStadiaStore();
-
-  const handleLaunchMissionControl = () => {
-    if (!user) {
-      loginAsDemo();
-      toast.success("Welcome! Logged in as Demo Operator.", {
-        icon: "🛡️",
-        style: {
-          background: "#101C2D",
-          border: "1px solid #00E5FF",
-          color: "#F8FAFC"
-        }
-      });
-    }
-    router.push("/dashboard");
-  };
+  const { simulationMode, user, authLoading } = useStadiaStore();
 
   const stats = [
     { value: "104", label: "Matches scheduled", suffix: "" },
@@ -183,13 +166,13 @@ export default function LandingPage() {
         </p>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-20">
-          <button
-            onClick={handleLaunchMissionControl}
-            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#00E5FF] to-[#3B82F6] text-[#07111F] font-bold rounded-lg shadow-[0_4px_25px_rgba(0,229,255,0.3)] hover:shadow-[0_4px_35px_rgba(0,229,255,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer border-none"
+          <Link
+            href="/auth"
+            className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-[#00E5FF] to-[#3B82F6] text-[#07111F] font-bold rounded-lg shadow-[0_4px_25px_rgba(0,229,255,0.3)] hover:shadow-[0_4px_35px_rgba(0,229,255,0.5)] hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2"
           >
             Launch Mission Control
             <ArrowRight className="w-4 h-4" />
-          </button>
+          </Link>
           <a
             href="#explore"
             className="w-full sm:w-auto px-8 py-4 bg-[#101C2D] border border-white/5 text-[#F8FAFC] font-semibold rounded-lg hover:bg-[#132238] hover:border-[#00E5FF]/20 hover:text-white transition-all flex items-center justify-center"
