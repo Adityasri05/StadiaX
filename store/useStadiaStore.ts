@@ -103,7 +103,6 @@ interface StadiaState {
     photoURL: string | null;
   } | null) => void;
   setAuthLoading: (loading: boolean) => void;
-  loginAsDemo: () => void;
 }
 
 const initialIncidents: Incident[] = [
@@ -416,7 +415,7 @@ export const useStadiaStore = create<StadiaState>((set) => ({
     }));
 
     let responseText = "";
-    let routeData = null;
+    let routeData: ChatMessage["routeData"] = undefined;
 
     try {
       const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY || "";
@@ -491,11 +490,12 @@ Do not include any extra fields in the JSON.
     set((state) => {
       const updatedHistory = state.chatHistory.map((msg) => {
         if (msg.id === placeholderId) {
-          return {
+          const updated: ChatMessage = {
             ...msg,
             text: responseText,
-            routeData
           };
+          if (routeData) updated.routeData = routeData;
+          return updated;
         }
         return msg;
       });
@@ -519,18 +519,6 @@ Do not include any extra fields in the JSON.
   setSelectedSector: (sector) => set({ selectedSector: sector }),
   setSelectedGate: (gate) => set({ selectedGate: gate }),
   setUser: (user) => set({ user }),
-  setAuthLoading: (authLoading) => set({ authLoading }),
-  loginAsDemo: () => {
-    const demoUser = {
-      uid: "demo-operator-101",
-      email: "demo.operator@stadiax.io",
-      displayName: "Demo Operator",
-      photoURL: null,
-    };
-    if (typeof window !== "undefined") {
-      localStorage.setItem("stadiax_demo_user", JSON.stringify(demoUser));
-    }
-    set({ user: demoUser, authLoading: false });
-  }
+  setAuthLoading: (authLoading) => set({ authLoading })
 }));
 
